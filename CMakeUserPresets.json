@@ -1,0 +1,33 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "macos-debug-arm64",
+      "displayName": "macOS Apple Silicon — Debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/Builds/macOS/ARM/Debug",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"},
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "JUCE_DIR": "$env{JUCE_DIR}"
+      }
+    },
+    {
+      "name": "macos-release-arm64",
+      "displayName": "macOS Apple Silicon — Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/Builds/macOS/ARM/Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"},
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "JUCE_DIR": "$env{JUCE_DIR}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {"name": "macos-debug-arm64", "configurePreset": "macos-debug-arm64", "configuration": "Debug"},
+    {"name": "macos-release-arm64", "configurePreset": "macos-release-arm64", "configuration": "Release"}
+  ]
+}

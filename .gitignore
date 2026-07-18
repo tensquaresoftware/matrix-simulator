@@ -1,0 +1,16 @@
+# Build
+Builds/
+cmake-build-*/
+compile_commands.json
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.xcuserstate
+DerivedData/
+
+# Local
+_local/
+.cursor/
+.agents/
