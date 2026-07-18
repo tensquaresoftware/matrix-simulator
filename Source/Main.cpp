@@ -225,9 +225,13 @@ public:
         midiToBox_.addListener(this);
         addAndMakeVisible(midiToBox_);
 
-        refreshButton_.setButtonText("Refresh ports");
+        refreshButton_.setButtonText("Refresh Ports");
         refreshButton_.onClick = [this] { refreshPortLists(); };
         addAndMakeVisible(refreshButton_);
+
+        clearLogsButton_.setButtonText("Clear Logs");
+        clearLogsButton_.onClick = [this] { logEditor_.clear(); };
+        addAndMakeVisible(clearLogsButton_);
 
         logLabel_.setText("Status", juce::dontSendNotification);
         addAndMakeVisible(logLabel_);
@@ -372,7 +376,12 @@ private:
         area.removeFromTop(kGapUnderField + kLabelH);
         midiToBox_.setBounds(area.removeFromTop(kFieldH));
         area.removeFromTop(kGapUnderField);
-        refreshButton_.setBounds(area.removeFromTop(kFieldH).removeFromLeft(140));
+        {
+            auto row = area.removeFromTop(kFieldH);
+            refreshButton_.setBounds(row.removeFromLeft(140));
+            row.removeFromLeft(8);
+            clearLogsButton_.setBounds(row.removeFromLeft(120));
+        }
         area.removeFromTop(12);
         logLabel_.setBounds(area.removeFromTop(20));
         logEditor_.setBounds(area);
@@ -668,6 +677,7 @@ private:
     juce::Label midiFromLabel_;
     juce::ComboBox midiFromBox_;
     juce::TextButton refreshButton_;
+    juce::TextButton clearLogsButton_;
     juce::Label logLabel_;
     juce::TextEditor logEditor_;
 
