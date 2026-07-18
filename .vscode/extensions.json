@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-vscode.cmake-tools",
+    "ms-vscode.cpptools",
+    "vadimcn.vscode-lldb"
+  ],
+  "unwantedRecommendations": [
+    "llvm-vs-code-extensions.vscode-clangd"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug: App",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/${command:cmake.buildDirectory}/Matrix-Simulator_artefacts/${command:cmake.buildType}/Matrix-Simulator.app/Contents/MacOS/Matrix-Simulator",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build: App",
+            "osx": {
+                "type": "lldb"
+            }
+        }
+    ]
+}

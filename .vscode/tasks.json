@@ -1,0 +1,77 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--preset", "macos-debug-arm64"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Configure if needed",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "test -d \"${command:cmake.buildDirectory}\" || cmake --preset macos-debug-arm64"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build: App",
+            "type": "shell",
+            "dependsOn": ["CMake: Configure if needed"],
+            "command": "cmake",
+            "args": [
+                "--build", "${command:cmake.buildDirectory}",
+                "--target", "Matrix-Simulator",
+                "--config", "${command:cmake.buildType}"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build: All",
+            "type": "shell",
+            "dependsOn": ["CMake: Configure if needed"],
+            "command": "cmake",
+            "args": [
+                "--build", "${command:cmake.buildDirectory}",
+                "--config", "${command:cmake.buildType}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf", "Builds"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean + Rebuild All",
+            "dependsOn": [
+                "Clean",
+                "CMake: Configure",
+                "Build: All"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
