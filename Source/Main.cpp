@@ -742,18 +742,23 @@ private:
             : DocumentWindow(name,
                              juce::Desktop::getInstance().getDefaultLookAndFeel()
                                  .findColour(juce::ResizableWindow::backgroundColourId),
-                             DocumentWindow::allButtons)
+                             DocumentWindow::closeButton | DocumentWindow::minimiseButton)
         {
+            constexpr int kWindowW = 500;
+            constexpr int kWindowMinH = 524;
+            constexpr int kWindowMaxH = 4096;
+
             setUsingNativeTitleBar(false);
             setMenuBar(this);
 
             auto* content = new SimulatorMainComponent(appProperties);
             contentComponent_ = content;
             setContentOwned(content, true);
-            setResizable(false, false);
-            setResizeLimits(500, 500, 500, 500);
-            setSize(500, 500);
-            centreWithSize(500, 500);
+            // Corner grip + equal min/max width → vertical resize only; Status log fills leftover height.
+            setResizable(true, true);
+            setResizeLimits(kWindowW, kWindowMinH, kWindowW, kWindowMaxH);
+            setSize(kWindowW, kWindowMinH);
+            centreWithSize(kWindowW, kWindowMinH);
             setVisible(true);
             toFront(true);
         }
