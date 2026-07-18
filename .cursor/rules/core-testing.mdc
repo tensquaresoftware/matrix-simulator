@@ -1,0 +1,47 @@
+---
+description: TDD, AAA, F.I.R.S.T. pour logique protocole / MIDI testable
+globs: "{Source/**,Tests/**}"
+alwaysApply: false
+---
+
+# Tests — Matrix-Simulator
+
+## Périmètre
+
+- **Tester** (quand une suite `Tests/` existe) : construction / parsing SysEx Device Inquiry, profils synth, helpers MIDI purs
+- **Ne pas tester** : composants GUI (`paint()`, layout), ports MIDI hardware / IAC réels
+- Enregistrer tout nouveau fichier de test dans le CMake des tests
+
+## Méthode — TDD préféré sur la logique pure
+
+1. **Red** — test qui exprime le comportement attendu (échoue)
+2. **Green** — code minimal pour passer
+3. **Refactor** — respecter les limites Clean Code, tests toujours verts
+
+Spike urgent : tests de logique **immédiatement après**, jamais omis pour une logique stable.
+
+## Structure AAA (obligatoire)
+
+```cpp
+// Arrange — entrées, fixtures, dépendances
+// Act     — appel de la fonction testée
+// Assert  — expect / ASSERT sur le résultat
+```
+
+Un test = un comportement. Nom explicite : `buildDeviceInquiryReply_matchesMatrix1000Profile`.
+
+## Qualité F.I.R.S.T.
+
+- **Fast** — millisecondes, pas de hardware ni sleep
+- **Independent** — pas d'état partagé mutable entre tests
+- **Repeatable** — même résultat partout
+- **Self-validating** — pass/fail automatique
+- **Timely** — avec ou avant le code de production
+
+## Pyramide
+
+- **Beaucoup** d'unitaires (`Tests/Unit/` si présent)
+- **Quelques** intégrations (chaînes SysEx si pertinent)
+- **Peu** d'E2E — UI et IAC validés manuellement (voir `README.md`)
+
+Fixtures binaires : `Tests/Fixtures/` — pas de gros blobs inline.

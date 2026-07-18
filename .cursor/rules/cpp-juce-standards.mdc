@@ -1,0 +1,60 @@
+---
+description: Conventions C++20 et JUCE 8 pour fichiers source
+globs: "**/*.{h,hpp,cpp}"
+alwaysApply: false
+---
+
+# C++ & JUCE Standards
+
+## Langue du code
+
+- **Anglais uniquement** dans le code : noms, commentaires. Pas de français dans les sources.
+
+## Naming
+
+- Variables / méthodes : `lowerCamelCase`
+- Classes / namespaces : `PascalCase`
+- Enums : `enum class`, valeurs préfixées `k` (`SynthProfile::kMatrix1000`)
+- Constantes publiques : `kMaxBufferSize` (sans suffixe)
+- Membres privés : suffixe `_` (`midiInput_`, `kWidth_`)
+- Pas de magic numbers → constantes nommées (`kNoSysExId`, pas `-1`)
+
+## Formatage (JUCE / Allman)
+
+- 4 espaces, pas de tabulations
+- Accolade ouvrante sur nouvelle ligne
+- `const` avant le type : `const Thing&`
+- Pointeurs : espace après le type `SomeObject* p`
+- `nullptr` uniquement (jamais `NULL` / `0`)
+- `#pragma once` en première ligne des headers
+
+## Includes
+
+1. Headers système C++
+2. Headers JUCE
+3. Headers projet (chemins relatifs depuis la racine, jamais `../../../`)
+
+Séparer chaque groupe par une ligne vide. Forward declarations dans `.h`, includes complets dans `.cpp`.
+
+## Architecture
+
+- Pas de dépendances circulaires ; interfaces pour découpler
+- Constantes protocole Device Inquiry : **uniquement** dans `Source/DeviceInquiry.h`
+
+## Thread-safety (critique)
+
+- Callbacks MIDI / audio : **aucune** allocation lourde, **aucun** appel GUI direct non autorisé
+- GUI depuis un autre thread → `juce::MessageManager::callAsync()`
+- FIFO lock-free pour communication inter-threads si besoin
+
+## APIs JUCE dépréciées — éviter
+
+- `getCurrentPlaybackSampleRate()` → `getSampleRate()`
+- `setPlayConfigDetails()` → `setBusesLayout()`
+- Ancien `Timer` callback → `juce::HighResolutionTimer`
+
+Vérifier toute API contre JUCE 8 ; signaler l'incertitude.
+
+## Application
+
+- Point d'entrée / fenêtre principale : `Main.cpp` (standalone `juce::JUCEApplication` / `DocumentWindow`)

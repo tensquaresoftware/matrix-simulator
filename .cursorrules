@@ -1,0 +1,27 @@
+# Project AI Assistant Notes
+
+This is a JUCE standalone macOS app built with CMake (no Projucer).
+It answers Universal Device Inquiry as a Matrix-1000 or Matrix-6 (provisional) over MIDI.
+
+## Layout
+
+- `Source/` — application sources (`Main.cpp`, `DeviceInquiry.h`, …).
+- `Assets/Icons/` — app icon PNG (macOS Dock via `ICON_BIG` in CMake).
+- `Docs/` — long-term project knowledge (PascalCase, like `Source/` and `Builds/`).
+- `CMakeLists.txt` — build configuration; register new `.cpp` files in `target_sources`.
+- `CMakeUserPresets.json` — per-platform CMake presets (Debug / Release).
+
+## Build
+
+JUCE is located via the `JUCE_DIR` environment variable, per-OS paths in `CMakeLists.txt`, or a standard install path. Configure and build with the preset for your platform, for example:
+
+`cmake --preset macos-debug-arm64 && cmake --build --preset macos-debug-arm64`
+
+See `README.md` for usage and protocol notes.
+
+## Conventions
+
+- Target the C++ standard set in `CMakeLists.txt` (`CMAKE_CXX_STANDARD` — currently C++20).
+- Version SSOT: `project(Matrix-Simulator VERSION …)` in CMake.
+- Refer to the JUCE 8 API: https://docs.juce.com
+- Cursor agent rules: `.cursor/rules/` (authoritative for communication, process, and coding standards).

@@ -1,0 +1,41 @@
+---
+description: Environnement Matrix-Simulator, Git, BMad, fichiers de référence
+alwaysApply: true
+---
+
+# Matrix-Simulator — Contexte projet
+
+## Environnement
+
+- macOS Tahoe, Xcode 26, CMake, **JUCE 8** (`JUCE_DIR` / chemins dans `CMakeLists.txt`, ex. `/Volumes/Guillaume/Dev/SDKs/JUCE/`)
+- Builds dans `Builds/` — **pas** `build/` à la racine
+- Dossiers projet en **PascalCase** : `Source/`, `Docs/`, `Builds/`
+- IDE / agent : **Cursor Pro+**
+- Nature : app **standalone** GUI (pas un plugin VST/AU) — Device Inquiry MIDI via IAC
+
+## Git
+
+- Commits **uniquement sur demande explicite** de Guillaume — jamais de commit proactif
+- Messages de commit en **anglais** : ligne impérative + puces des changements significatifs
+- Issues GitHub : titre et description en anglais
+
+## BMad Method
+
+- **Versionné** : `_bmad/` (config installer), `_bmad/custom/config.toml` (politique d’équipe), `_bmad-output/` (artefacts)
+- **Local / gitignored** : `.agents/` (cache skills Cursor, régénéré par l’installer BMad), `_bmad/custom/config.user.toml` (override perso)
+- **Pas de skills versionnés** dans le dépôt — après clone, relancer l’installer BMad (cible Cursor) pour recréer `.agents/`
+- Chat agents : français ; documents générés BMad : **anglais**
+
+## Fichiers clés (lire avant d'implémenter)
+
+- `README.md` — usage, protocole Device Inquiry, hors périmètre
+- `Source/DeviceInquiry.h` — octets protocole (SSOT member / family)
+- `Source/Main.cpp` — app, MIDI, UI
+- `CMakeLists.txt` — enregistrement des sources
+- `.cursor/rules/` — standards communication, process, C++ / JUCE
+
+## Interdits fréquents (rappel)
+
+- Pas de texte français dans le code source
+- Pas de dépendance à un autre dépôt ou projet frère
+- Ne pas disperser les constantes de protocole hors de `DeviceInquiry.h`

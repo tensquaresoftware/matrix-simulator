@@ -6,11 +6,17 @@ compile_commands.json
 # IDE / OS
 .DS_Store
 .idea/
-.vscode/
+.vscode/.cmaketools.json
+.vscode/c_cpp_properties.json
 *.xcuserstate
 DerivedData/
 
 # Local
 _local/
-.cursor/
 .agents/
+*.bak
+
+# Cursor — ignore local IDE state; version agent rules
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
