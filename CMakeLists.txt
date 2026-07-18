@@ -50,7 +50,8 @@ juce_add_gui_app(Matrix-Simulator
                  PRODUCT_NAME "Matrix-Simulator"
                  COMPANY_NAME "Ten Square Software"
                  BUNDLE_ID "com.tensquaresoftware.MatrixSimulator"
-                 VERSION "${PROJECT_VERSION}")
+                 VERSION "${PROJECT_VERSION}"
+                 ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Icons/Matrix-Simulator-Logo.png")
 
 target_sources(Matrix-Simulator PRIVATE
     Source/Main.cpp
