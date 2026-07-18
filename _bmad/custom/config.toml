@@ -1,0 +1,11 @@
+# Team / enterprise overrides for _bmad/config.toml.
+# Committed to the repo — applies to every developer on the project.
+# Tables deep-merge over base config; keyed entries merge by key.
+
+[core]
+# All BMad-generated documents (PRDs, architecture, stories, etc.) in English.
+document_output_language = "English"
+
+[modules.bmm]
+# PascalCase folder naming, consistent with Source / Builds.
+project_knowledge = "{project-root}/Docs"
