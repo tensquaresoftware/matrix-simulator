@@ -4,10 +4,6 @@ Standalone macOS tool that answers Universal Device Inquiry as a Matrix-1000 or
 Matrix-6 (provisional) over MIDI (IAC). Useful for development and travel without
 Matrix hardware.
 
-This project is self-contained: it does not depend on any other application’s
-source tree, build, or shared libraries. Protocol bytes live only in this repo
-(`Source/DeviceInquiry.h`).
-
 ## Build
 
 ```bash
