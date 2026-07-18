@@ -3,7 +3,7 @@
 #include <juce_core/juce_core.h>
 
 /** Local Universal Device Inquiry constants for this tool.
-    Independent of Matrix-Control — update manually if protocol bytes change. */
+    Update manually if Matrix Device Inquiry protocol bytes change. */
 namespace DeviceInquiry
 {
     constexpr juce::uint8 kSysExStart = 0xF0;

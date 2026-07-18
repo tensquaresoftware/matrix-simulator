@@ -1,4 +1,4 @@
-// Matrix-Simulator — Universal Device Inquiry responder for Matrix-Control UAT (macOS IAC).
+// Matrix-Simulator — Universal Device Inquiry responder for Matrix synths (macOS IAC).
 
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_data_structures/juce_data_structures.h>
