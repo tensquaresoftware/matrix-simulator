@@ -1,5 +1,7 @@
 // Matrix-Simulator — Universal Device Inquiry responder for Matrix synths (macOS IAC).
 
+#include <utility>
+
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_data_structures/juce_data_structures.h>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -12,6 +14,7 @@ namespace
     constexpr const char* kKeyFirmware = "firmwareVersion";
     constexpr const char* kKeyMidiToId = "midiToIdentifier";
     constexpr const char* kKeyMidiFromId = "midiFromIdentifier";
+    constexpr const char* kKeyMidiPortsLocalReferential = "midiPortsLocalReferential";
     constexpr const char* kKeyEnabledInputs = "enabledInputIds";
     constexpr const char* kKeyEnabledOutputs = "enabledOutputIds";
     constexpr const char* kKeyHasPortFilter = "hasPortFilter";
@@ -296,6 +299,17 @@ private:
         savedMidiToId_ = props->getValue(kKeyMidiToId);
         savedMidiFromId_ = props->getValue(kKeyMidiFromId);
 
+        // Legacy prefs stored synth-centric IDs (From=output, To=input). Swap once to
+        // the app-local referential (From=input, To=output).
+        if (! props->getBoolValue(kKeyMidiPortsLocalReferential, false))
+        {
+            std::swap(savedMidiFromId_, savedMidiToId_);
+            props->setValue(kKeyMidiPortsLocalReferential, true);
+            props->setValue(kKeyMidiToId, savedMidiToId_);
+            props->setValue(kKeyMidiFromId, savedMidiFromId_);
+            props->saveIfNeeded();
+        }
+
         hasPortFilter_ = props->getBoolValue(kKeyHasPortFilter, false);
         if (hasPortFilter_)
         {
@@ -330,6 +344,7 @@ private:
         props->setValue(kKeyFirmware, normalizeFirmwareVersion(versionEditor_.getText()).trim());
         props->setValue(kKeyMidiToId, savedMidiToId_);
         props->setValue(kKeyMidiFromId, savedMidiFromId_);
+        props->setValue(kKeyMidiPortsLocalReferential, true);
         props->setValue(kKeyHasPortFilter, hasPortFilter_);
         props->setValue(kKeyEnabledInputs, enabledInputIds_.joinIntoString("\n"));
         props->setValue(kKeyEnabledOutputs, enabledOutputIds_.joinIntoString("\n"));
@@ -441,28 +456,28 @@ private:
                     enabledOutputIds_.addIfNotAlreadyThere(d.identifier);
             }
 
-        int nextToId = 2;
+        int nextFromId = 2;
         filteredInputs_.clear();
         for (const auto& device : allInputs_)
         {
             if (! enabledInputIds_.contains(device.identifier))
                 continue;
             filteredInputs_.add(device);
-            midiToBox_.addItem(device.name, nextToId++);
+            midiFromBox_.addItem(device.name, nextFromId++);
         }
 
-        int nextFromId = 2;
+        int nextToId = 2;
         filteredOutputs_.clear();
         for (const auto& device : allOutputs_)
         {
             if (! enabledOutputIds_.contains(device.identifier))
                 continue;
             filteredOutputs_.add(device);
-            midiFromBox_.addItem(device.name, nextFromId++);
+            midiToBox_.addItem(device.name, nextToId++);
         }
 
-        selectByIdentifier(midiToBox_, filteredInputs_, savedMidiToId_);
-        selectByIdentifier(midiFromBox_, filteredOutputs_, savedMidiFromId_);
+        selectByIdentifier(midiFromBox_, filteredInputs_, savedMidiFromId_);
+        selectByIdentifier(midiToBox_, filteredOutputs_, savedMidiToId_);
 
         if (reopen)
         {
@@ -471,8 +486,8 @@ private:
         }
 
         // Device disappeared from the OS list: UI shows (none) but ports may still be open.
-        const bool uiWantsInput = midiToBox_.getSelectedId() > 1;
-        const bool uiWantsOutput = midiFromBox_.getSelectedId() > 1;
+        const bool uiWantsInput = midiFromBox_.getSelectedId() > 1;
+        const bool uiWantsOutput = midiToBox_.getSelectedId() > 1;
         const bool inputOpen = midiInput_ != nullptr;
         const bool outputOpen = [&]
         {
@@ -510,40 +525,21 @@ private:
     {
         closePorts();
 
-        const int toIndex = midiToBox_.getSelectedItemIndex() - 1;
         const int fromIndex = midiFromBox_.getSelectedItemIndex() - 1;
+        const int toIndex = midiToBox_.getSelectedItemIndex() - 1;
 
-        savedMidiToId_.clear();
         savedMidiFromId_.clear();
+        savedMidiToId_.clear();
 
-        if (toIndex >= 0 && toIndex < filteredInputs_.size())
+        if (fromIndex >= 0 && fromIndex < filteredInputs_.size())
         {
-            const auto& device = filteredInputs_.getReference(toIndex);
-            savedMidiToId_ = device.identifier;
+            const auto& device = filteredInputs_.getReference(fromIndex);
+            savedMidiFromId_ = device.identifier;
             midiInput_ = juce::MidiInput::openDevice(device.identifier, this);
             if (midiInput_ != nullptr)
             {
                 midiInput_->start();
-                appendLog("Listening on MIDI To: " + device.name);
-            }
-            else
-            {
-                appendLog("Failed to open MIDI To: " + device.name);
-            }
-        }
-
-        if (fromIndex >= 0 && fromIndex < filteredOutputs_.size())
-        {
-            const auto& device = filteredOutputs_.getReference(fromIndex);
-            savedMidiFromId_ = device.identifier;
-            auto output = juce::MidiOutput::openDevice(device.identifier);
-            if (output != nullptr)
-            {
-                {
-                    const juce::ScopedLock lock(stateLock_);
-                    midiOutput_ = std::move(output);
-                }
-                appendLog("Replying on MIDI From: " + device.name);
+                appendLog("Listening on MIDI From: " + device.name);
             }
             else
             {
@@ -551,8 +547,27 @@ private:
             }
         }
 
+        if (toIndex >= 0 && toIndex < filteredOutputs_.size())
+        {
+            const auto& device = filteredOutputs_.getReference(toIndex);
+            savedMidiToId_ = device.identifier;
+            auto output = juce::MidiOutput::openDevice(device.identifier);
+            if (output != nullptr)
+            {
+                {
+                    const juce::ScopedLock lock(stateLock_);
+                    midiOutput_ = std::move(output);
+                }
+                appendLog("Replying on MIDI To: " + device.name);
+            }
+            else
+            {
+                appendLog("Failed to open MIDI To: " + device.name);
+            }
+        }
+
         const bool sameName = midiToBox_.getText() == midiFromBox_.getText()
-                              && midiToBox_.getSelectedId() > 1;
+                              && midiFromBox_.getSelectedId() > 1;
         const bool bothOpen = midiInput_ != nullptr && [&]
         {
             const juce::ScopedLock lock(stateLock_);
@@ -608,7 +623,7 @@ private:
                 juce::MessageManager::callAsync([safeThis]
                 {
                     if (safeThis != nullptr)
-                        safeThis->appendLog("Inquiry received but MIDI From is not open");
+                        safeThis->appendLog("Inquiry received but MIDI To is not open");
                 });
                 return;
             }

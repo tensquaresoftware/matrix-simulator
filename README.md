@@ -21,15 +21,16 @@ App:
 2. Launch **Matrix-Simulator**. Choose **Synth Profile** (Matrix-1000 or Matrix-6/6R provisional).
 3. Select **MIDI From** then **MIDI To**.
 4. Optional: **Options → Active MIDI Ports…** — checkboxes filter which ports appear in the combos.
-5. Point a host editor’s MIDI output at the simulator’s **MIDI To**, and its MIDI input at the simulator’s **MIDI From**.
+5. Point a host editor’s MIDI output at the simulator’s **MIDI From**, and its MIDI input at the simulator’s **MIDI To**.
+   (With Matrix-Control, whose From/To labels stay synth-centric, that means crossing the port picks between the two apps.)
 6. Send Universal Device Inquiry; expect a Device ID reply matching the selected profile.
 
 ```
-Host editor  --MIDI To-->  Simulator "MIDI To"
-Host editor  <--MIDI From--  Simulator "MIDI From"
+Host editor Out  -->  Simulator "MIDI From"
+Host editor In   <--  Simulator "MIDI To"
 ```
 
-Prefer distinct IAC buses for To vs From when possible.
+Prefer distinct IAC buses for From vs To when possible.
 
 ## Protocol
 
