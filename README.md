@@ -1,7 +1,7 @@
 # Matrix-Simulator
 
 Standalone macOS tool that answers Universal Device Inquiry as a Matrix-1000 or
-Matrix-6 (provisional) over MIDI (IAC). Useful for development and travel without
+Matrix-6/6R (provisional) over MIDI (IAC). Useful for development and travel without
 Matrix hardware.
 
 ## Build
@@ -18,7 +18,7 @@ App:
 ## Usage
 
 1. Enable **IAC Driver** in Audio MIDI Setup.
-2. Launch **Matrix-Simulator**. Choose **Synth Profile** (Matrix-1000 or Matrix-6 provisional).
+2. Launch **Matrix-Simulator**. Choose **Synth Profile** (Matrix-1000 or Matrix-6/6R provisional).
 3. Select **MIDI From** then **MIDI To**.
 4. Optional: **Options → Active MIDI Ports…** — checkboxes filter which ports appear in the combos.
 5. Point a host editor’s MIDI output at the simulator’s **MIDI To**, and its MIDI input at the simulator’s **MIDI From**.

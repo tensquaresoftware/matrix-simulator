@@ -29,7 +29,7 @@ namespace
             case DeviceProfile::kMatrix1000:
                 return "Matrix-1000";
             case DeviceProfile::kMatrix6Provisional:
-                return "Matrix-6 (provisional inquiry)";
+                return "Matrix-6/6R (provisional inquiry)";
         }
         return "Unknown";
     }
@@ -196,7 +196,7 @@ public:
         addAndMakeVisible(profileLabel_);
 
         profileBox_.addItem("Matrix-1000", 1);
-        profileBox_.addItem("Matrix-6 (provisional inquiry)", 2);
+        profileBox_.addItem("Matrix-6/6R (provisional inquiry)", 2);
         profileBox_.setSelectedId(1, juce::dontSendNotification);
         profileBox_.addListener(this);
         addAndMakeVisible(profileBox_);
