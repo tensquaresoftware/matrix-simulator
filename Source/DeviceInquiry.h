@@ -25,6 +25,9 @@ namespace DeviceInquiry
     constexpr juce::uint8 kExpectedMemberHigh = 0x00;
     constexpr juce::uint8 kMatrix6MemberLow = 0x01;
     constexpr juce::uint8 kMatrix6MemberHigh = 0x00;
+    /** Valid Oberheim/family reply that is neither Matrix-1000 nor Matrix-6/6R. */
+    constexpr juce::uint8 kUnknownMemberLow = 0x00;
+    constexpr juce::uint8 kUnknownMemberHigh = 0x00;
 
     inline bool isDeviceInquiryRequest(const juce::MemoryBlock& sysEx) noexcept
     {

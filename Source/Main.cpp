@@ -1,4 +1,4 @@
-// Matrix-Simulator — Universal Device Inquiry responder for Matrix synths (macOS IAC).
+// Matrix-Simulator — Universal Device Inquiry responder for Matrix / unknown devices (macOS IAC).
 
 #include <utility>
 
@@ -22,8 +22,36 @@ namespace
     enum class DeviceProfile
     {
         kMatrix1000 = 0,
-        kMatrix6Provisional = 1
+        kMatrix6Provisional = 1,
+        kUnknownDevice = 2
     };
+
+    DeviceProfile profileFromComboId(int comboId) noexcept
+    {
+        switch (comboId)
+        {
+            case 2:
+                return DeviceProfile::kMatrix6Provisional;
+            case 3:
+                return DeviceProfile::kUnknownDevice;
+            default:
+                return DeviceProfile::kMatrix1000;
+        }
+    }
+
+    int comboIdFromProfile(DeviceProfile profile) noexcept
+    {
+        switch (profile)
+        {
+            case DeviceProfile::kMatrix6Provisional:
+                return 2;
+            case DeviceProfile::kUnknownDevice:
+                return 3;
+            case DeviceProfile::kMatrix1000:
+                return 1;
+        }
+        return 1;
+    }
 
     juce::String profileLabel(DeviceProfile profile)
     {
@@ -33,22 +61,38 @@ namespace
                 return "Matrix-1000";
             case DeviceProfile::kMatrix6Provisional:
                 return "Matrix-6/6R (provisional inquiry)";
+            case DeviceProfile::kUnknownDevice:
+                return "Unknown Device";
         }
-        return "Unknown";
+        return "Invalid profile";
     }
 
     juce::uint8 profileMemberLow(DeviceProfile profile) noexcept
     {
-        return profile == DeviceProfile::kMatrix6Provisional
-                   ? DeviceInquiry::kMatrix6MemberLow
-                   : DeviceInquiry::kExpectedMemberLow;
+        switch (profile)
+        {
+            case DeviceProfile::kMatrix6Provisional:
+                return DeviceInquiry::kMatrix6MemberLow;
+            case DeviceProfile::kUnknownDevice:
+                return DeviceInquiry::kUnknownMemberLow;
+            case DeviceProfile::kMatrix1000:
+                return DeviceInquiry::kExpectedMemberLow;
+        }
+        return DeviceInquiry::kExpectedMemberLow;
     }
 
     juce::uint8 profileMemberHigh(DeviceProfile profile) noexcept
     {
-        return profile == DeviceProfile::kMatrix6Provisional
-                   ? DeviceInquiry::kMatrix6MemberHigh
-                   : DeviceInquiry::kExpectedMemberHigh;
+        switch (profile)
+        {
+            case DeviceProfile::kMatrix6Provisional:
+                return DeviceInquiry::kMatrix6MemberHigh;
+            case DeviceProfile::kUnknownDevice:
+                return DeviceInquiry::kUnknownMemberHigh;
+            case DeviceProfile::kMatrix1000:
+                return DeviceInquiry::kExpectedMemberHigh;
+        }
+        return DeviceInquiry::kExpectedMemberHigh;
     }
 
     juce::String normalizeFirmwareVersion(const juce::String& raw)
@@ -200,6 +244,7 @@ public:
 
         profileBox_.addItem("Matrix-1000", 1);
         profileBox_.addItem("Matrix-6/6R (provisional inquiry)", 2);
+        profileBox_.addItem("Unknown Device", 3);
         profileBox_.setSelectedId(1, juce::dontSendNotification);
         profileBox_.addListener(this);
         addAndMakeVisible(profileBox_);
@@ -290,10 +335,9 @@ private:
         if (props == nullptr)
             return;
 
-        const int profileId = props->getIntValue(kKeyProfileId, 1);
-        profileBox_.setSelectedId(profileId == 2 ? 2 : 1, juce::dontSendNotification);
-        profile_ = profileId == 2 ? DeviceProfile::kMatrix6Provisional
-                                  : DeviceProfile::kMatrix1000;
+        const auto profile = profileFromComboId(props->getIntValue(kKeyProfileId, 1));
+        profileBox_.setSelectedId(comboIdFromProfile(profile), juce::dontSendNotification);
+        profile_ = profile;
 
         const auto firmware = normalizeFirmwareVersion(
             props->getValue(kKeyFirmware, "1.11"));
@@ -391,9 +435,7 @@ private:
     {
         if (box == &profileBox_)
         {
-            const auto profile = profileBox_.getSelectedId() == 2
-                                     ? DeviceProfile::kMatrix6Provisional
-                                     : DeviceProfile::kMatrix1000;
+            const auto profile = profileFromComboId(profileBox_.getSelectedId());
             {
                 const juce::ScopedLock lock(stateLock_);
                 profile_ = profile;
@@ -651,10 +693,20 @@ private:
             return;
 
         const auto label = profileLabel(profile);
-        juce::MessageManager::callAsync([safeThis, label]
+        const auto membLo = profileMemberLow(profile);
+        const auto membHi = profileMemberHigh(profile);
+        juce::MessageManager::callAsync([safeThis, label, membLo, membHi]
         {
             if (safeThis != nullptr)
-                safeThis->appendLog("Inquiry received -> replied as " + label);
+            {
+                safeThis->appendLog(
+                    "Inquiry received -> replied as " + label
+                    + " (member "
+                    + juce::String::toHexString(static_cast<int>(membLo)).paddedLeft('0', 2)
+                    + " "
+                    + juce::String::toHexString(static_cast<int>(membHi)).paddedLeft('0', 2)
+                    + ")");
+            }
         });
     }
 
