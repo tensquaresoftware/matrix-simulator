@@ -23,3 +23,15 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-unknown-device-synth-profile.md`
   summary: Add a scripted or unit check that combo ID 3 encodes member bytes `00 00` with manufacturer `10` and family `06`.
   evidence: Project has no inquiry-reply unit tests yet; wrong switch arm would only show up in a MIDI monitor.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-firmware-inquiry-digits.md`
+  summary: Add golden tests for Device Inquiry rev packing (`111`→`20 31 31 31`, `110`→`20 31 31 30`, short lengths, empty→default).
+  evidence: No unit harness in this repo yet; packing correctness is only checked via Status log hex and Matrix-Control display.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-firmware-inquiry-digits.md`
+  summary: Confirm whether stock Matrix ROMs always emit three digits (one leading space) vs arbitrary 1–4 digit lengths.
+  evidence: Oberheim docs only exemplify version 1.10 as ` 110`; 1–4 digit UI allowed by protocol wording but may over-simulate.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-firmware-inquiry-digits.md`
+  summary: Tighten legacy dotted-prefs migration beyond digit-stripping if exotic saved values appear.
+  evidence: `"1.11"`→`"111"` is correct for prior defaults; ambiguous forms like `"10.1"` are unlikely from this app.

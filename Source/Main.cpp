@@ -97,14 +97,7 @@ namespace
 
     juce::String normalizeFirmwareVersion(const juce::String& raw)
     {
-        auto trimmed = raw.trim();
-        if (trimmed.isEmpty())
-            return "1.11";
-
-        while (trimmed.length() < 4)
-            trimmed << ' ';
-
-        return trimmed.substring(0, 4);
+        return DeviceInquiry::normalizeFirmwareDigits(raw);
     }
 }
 
@@ -249,12 +242,12 @@ public:
         profileBox_.addListener(this);
         addAndMakeVisible(profileBox_);
 
-        versionLabel_.setText("Firmware (4 chars)", juce::dontSendNotification);
+        versionLabel_.setText("Firmware (4 digits)", juce::dontSendNotification);
         versionLabel_.attachToComponent(&versionEditor_, false);
         addAndMakeVisible(versionLabel_);
 
-        versionEditor_.setText("1.11", juce::dontSendNotification);
-        versionEditor_.setInputRestrictions(4);
+        versionEditor_.setText("111", juce::dontSendNotification);
+        versionEditor_.setInputRestrictions(4, "0123456789");
         versionEditor_.addListener(this);
         addAndMakeVisible(versionEditor_);
 
@@ -339,10 +332,12 @@ private:
         profileBox_.setSelectedId(comboIdFromProfile(profile), juce::dontSendNotification);
         profile_ = profile;
 
-        const auto firmware = normalizeFirmwareVersion(
-            props->getValue(kKeyFirmware, "1.11"));
-        versionEditor_.setText(firmware.trim(), juce::dontSendNotification);
+        const auto rawFirmware = props->getValue(kKeyFirmware, "111");
+        const auto firmware = normalizeFirmwareVersion(rawFirmware);
+        versionEditor_.setText(firmware, juce::dontSendNotification);
         firmwareVersion_ = firmware;
+        if (firmware != rawFirmware)
+            props->setValue(kKeyFirmware, firmware);
 
         savedMidiToId_ = props->getValue(kKeyMidiToId);
         savedMidiFromId_ = props->getValue(kKeyMidiFromId);
@@ -389,7 +384,7 @@ private:
             return;
 
         props->setValue(kKeyProfileId, profileBox_.getSelectedId());
-        props->setValue(kKeyFirmware, normalizeFirmwareVersion(versionEditor_.getText()).trim());
+        props->setValue(kKeyFirmware, normalizeFirmwareVersion(versionEditor_.getText()));
         props->setValue(kKeyMidiToId, savedMidiToId_);
         props->setValue(kKeyMidiFromId, savedMidiFromId_);
         props->setValue(kKeyMidiPortsLocalReferential, true);
@@ -457,9 +452,13 @@ private:
         if (&editor != &versionEditor_)
             return;
 
-        const auto version = normalizeFirmwareVersion(versionEditor_.getText());
+        // Keep last committed value while the field is empty mid-edit.
+        const auto digits = DeviceInquiry::extractFirmwareDigits(versionEditor_.getText());
+        if (digits.isEmpty())
+            return;
+
         const juce::ScopedLock lock(stateLock_);
-        firmwareVersion_ = version;
+        firmwareVersion_ = digits;
     }
 
     void textEditorReturnKeyPressed(juce::TextEditor& editor) override
@@ -478,7 +477,7 @@ private:
             const juce::ScopedLock lock(stateLock_);
             firmwareVersion_ = version;
         }
-        appendLog("Firmware version set to \"" + version.trim() + "\"");
+        appendLog("Firmware version set to \"" + version + "\"");
         saveSettings();
     }
 
@@ -692,19 +691,26 @@ private:
         if (! sent)
             return;
 
+        juce::uint8 rev[4];
+        DeviceInquiry::packFirmwareVersionBytes(version, rev);
         const auto label = profileLabel(profile);
         const auto membLo = profileMemberLow(profile);
         const auto membHi = profileMemberHigh(profile);
-        juce::MessageManager::callAsync([safeThis, label, membLo, membHi]
+        juce::MessageManager::callAsync([safeThis, label, membLo, membHi,
+                                         r0 = rev[0], r1 = rev[1], r2 = rev[2], r3 = rev[3]]
         {
             if (safeThis != nullptr)
             {
+                const auto hexByte = [] (juce::uint8 b)
+                {
+                    return juce::String::toHexString(static_cast<int>(b)).paddedLeft('0', 2);
+                };
                 safeThis->appendLog(
                     "Inquiry received -> replied as " + label
                     + " (member "
-                    + juce::String::toHexString(static_cast<int>(membLo)).paddedLeft('0', 2)
-                    + " "
-                    + juce::String::toHexString(static_cast<int>(membHi)).paddedLeft('0', 2)
+                    + hexByte(membLo) + " " + hexByte(membHi)
+                    + ", rev "
+                    + hexByte(r0) + " " + hexByte(r1) + " " + hexByte(r2) + " " + hexByte(r3)
                     + ")");
             }
         });
@@ -748,7 +754,7 @@ private:
 
     juce::CriticalSection stateLock_;
     DeviceProfile profile_ { DeviceProfile::kMatrix1000 };
-    juce::String firmwareVersion_ { "1.11" };
+    juce::String firmwareVersion_ { "111" };
     std::unique_ptr<juce::MidiOutput> midiOutput_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SimulatorMainComponent)

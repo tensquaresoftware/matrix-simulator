@@ -43,20 +43,46 @@ namespace DeviceInquiry
         return true;
     }
 
+    /** Digits only, max 4. May be empty (no default). */
+    inline juce::String extractFirmwareDigits(juce::StringRef raw)
+    {
+        juce::String digits;
+        const auto text = juce::String(raw);
+        for (int i = 0; i < text.length() && digits.length() < 4; ++i)
+        {
+            const auto c = text[i];
+            if (c >= '0' && c <= '9')
+                digits << c;
+        }
+        return digits;
+    }
+
+    /** Digits only, max 4. Empty / invalid → "111" (Oberheim 1.11 without decimal). */
+    inline juce::String normalizeFirmwareDigits(juce::StringRef raw)
+    {
+        const auto digits = extractFirmwareDigits(raw);
+        return digits.isEmpty() ? juce::String("111") : digits;
+    }
+
+    /** Pack up to 4 digits into right-justified ASCII (Oberheim Device Inquiry).
+        Example: "111" → ' ','1','1','1' for human version 1.11. */
+    inline void packFirmwareVersionBytes(juce::StringRef firmwareVersion, juce::uint8 out[4])
+    {
+        out[0] = out[1] = out[2] = out[3] = ' ';
+        const auto digits = normalizeFirmwareDigits(firmwareVersion);
+        const int start = 4 - digits.length();
+        for (int i = 0; i < digits.length(); ++i)
+            out[static_cast<size_t>(start + i)] = static_cast<juce::uint8>(digits[i] & 0x7f);
+    }
+
     /** F0 7E <chan> 06 02 10 06 00 <memb-lo> <memb-hi> <rev0..3> F7 */
     inline juce::MemoryBlock encodeReply(juce::uint8 memberLow,
                                          juce::uint8 memberHigh,
-                                         juce::StringRef firmwareVersion = "1.11",
+                                         juce::StringRef firmwareVersion = "111",
                                          juce::uint8 channel = 0x00)
     {
-        juce::uint8 versionBytes[4] = { ' ', ' ', ' ', ' ' };
-        auto version = juce::String(firmwareVersion);
-        if (version.isEmpty())
-            version = "1.11";
-
-        const int copyLen = juce::jmin(4, version.length());
-        for (int i = 0; i < copyLen; ++i)
-            versionBytes[static_cast<size_t>(i)] = static_cast<juce::uint8>(version[i] & 0x7f);
+        juce::uint8 versionBytes[4];
+        packFirmwareVersionBytes(firmwareVersion, versionBytes);
 
         const juce::uint8 reply[] = {
             kSysExStart,

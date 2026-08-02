@@ -40,6 +40,10 @@ Prefer distinct IAC buses for From vs To when possible.
   - Matrix-1000 → `02 00`
   - Matrix-6/6R (provisional) → `01 00`
   - Unknown Device → `00 00` (Oberheim-family reply that is neither Matrix model)
+- `<rev0..3>` = up to 4 ASCII digits, **right-justified** with leading spaces (no decimal
+  point). UI stores unpadded digits (default `111` = human 1.11); wire example
+  `111` → `20 31 31 31` (` 111`). Older simulator builds that sent a dotted string
+  (e.g. `1.11`) are intentionally incompatible with this hardware-accurate packing.
 - Member / family bytes are defined only in `Source/DeviceInquiry.h`.
   Update them here if the Matrix Device Inquiry protocol bytes change.
 
