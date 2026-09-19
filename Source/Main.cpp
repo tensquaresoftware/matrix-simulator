@@ -769,7 +769,8 @@ public:
         options.applicationName = "Matrix-Simulator";
         options.filenameSuffix = ".settings";
         options.osxLibrarySubFolder = "Application Support";
-        options.folderName = "Ten Square Software";
+        options.folderName = "Ten Square Software/Matrix-Simulator";
+        options.commonToAllUsers = false;
         appProperties_.setStorageParameters(options);
     }
 
