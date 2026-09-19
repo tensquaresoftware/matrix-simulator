@@ -23,5 +23,5 @@ See `README.md` for usage and protocol notes.
 
 - Target the C++ standard set in `CMakeLists.txt` (`CMAKE_CXX_STANDARD` — currently C++20).
 - Version SSOT: `project(Matrix-Simulator VERSION …)` in CMake.
-- Refer to the JUCE 8 API: https://docs.juce.com
+- Refer to the JUCE 9 API: https://docs.juce.com
 - Cursor agent rules: `.cursor/rules/` (authoritative for communication, process, and coding standards).

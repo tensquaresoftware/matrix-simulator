@@ -20,7 +20,7 @@ project(Matrix-Simulator VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(JUCE_DIR_MACOS "/Volumes/Guillaume/Dev/SDKs/JUCE/")
+set(JUCE_DIR_MACOS "/Volumes/Guillaume/Dev/SDKs/JUCE-9")
 set(JUCE_DIR_WINDOWS "C:/Users/Guillaume/Dev/SDKs/JUCE")
 set(JUCE_DIR_LINUX "/home/guillaume/Dev/SDKs/JUCE")
 

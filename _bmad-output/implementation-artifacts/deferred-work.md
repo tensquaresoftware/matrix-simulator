@@ -35,3 +35,11 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-firmware-inquiry-digits.md`
   summary: Tighten legacy dotted-prefs migration beyond digit-stripping if exotic saved values appear.
   evidence: `"1.11"`→`"111"` is correct for prior defaults; ambiguous forms like `"10.1"` are unlikely from this app.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-juce-9-sdk-path.md`
+  summary: Guard against a leftover JUCE_DIR env/cache still selecting JUCE-8 while docs say JUCE 9.
+  evidence: CMake prefers -DJUCE_DIR / ENV{JUCE_DIR} before JUCE_DIR_MACOS; JUCE-8 still exists on disk beside JUCE-9.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-juce-9-sdk-path.md`
+  summary: Re-audit cpp-juce-standards deprecated-API bullets against JUCE 9 (e.g. Timer vs HighResolutionTimer).
+  evidence: Only the version label was bumped; juce::Timer remains a first-class API in JUCE 9.

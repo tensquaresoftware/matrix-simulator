@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## Environnement
 
-- macOS Tahoe, Xcode 26, CMake, **JUCE 8** (`JUCE_DIR` / chemins dans `CMakeLists.txt`, ex. `/Volumes/Guillaume/Dev/SDKs/JUCE/`)
+- macOS Tahoe, Xcode 26, CMake, **JUCE 9** (`JUCE_DIR` / chemins dans `CMakeLists.txt`, ex. `/Volumes/Guillaume/Dev/SDKs/JUCE-9`)
 - Builds dans `Builds/` — **pas** `build/` à la racine
 - Dossiers projet en **PascalCase** : `Source/`, `Docs/`, `Builds/`
 - IDE / agent : **Cursor Pro+**

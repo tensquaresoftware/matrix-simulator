@@ -1,5 +1,5 @@
 ---
-description: Conventions C++20 et JUCE 8 pour fichiers source
+description: Conventions C++20 et JUCE 9 pour fichiers source
 globs: "**/*.{h,hpp,cpp}"
 alwaysApply: false
 ---
@@ -53,7 +53,7 @@ Séparer chaque groupe par une ligne vide. Forward declarations dans `.h`, inclu
 - `setPlayConfigDetails()` → `setBusesLayout()`
 - Ancien `Timer` callback → `juce::HighResolutionTimer`
 
-Vérifier toute API contre JUCE 8 ; signaler l'incertitude.
+Vérifier toute API contre JUCE 9 ; signaler l'incertitude.
 
 ## Application
 
