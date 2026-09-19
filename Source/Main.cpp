@@ -271,6 +271,12 @@ public:
         clearLogsButton_.onClick = [this] { logEditor_.clear(); };
         addAndMakeVisible(clearLogsButton_);
 
+        appVersionLabel_.setText("(App v" JUCE_APPLICATION_VERSION_STRING ")",
+                                 juce::dontSendNotification);
+        appVersionLabel_.setJustificationType(juce::Justification::centredRight);
+        appVersionLabel_.setInterceptsMouseClicks(false, false);
+        addAndMakeVisible(appVersionLabel_);
+
         logLabel_.setText("Status", juce::dontSendNotification);
         addAndMakeVisible(logLabel_);
 
@@ -420,6 +426,8 @@ private:
             refreshButton_.setBounds(row.removeFromLeft(140));
             row.removeFromLeft(8);
             clearLogsButton_.setBounds(row.removeFromLeft(120));
+            row.removeFromLeft(8);
+            appVersionLabel_.setBounds(row);
         }
         area.removeFromTop(12);
         logLabel_.setBounds(area.removeFromTop(20));
@@ -736,6 +744,7 @@ private:
     juce::ComboBox midiFromBox_;
     juce::TextButton refreshButton_;
     juce::TextButton clearLogsButton_;
+    juce::Label appVersionLabel_;
     juce::Label logLabel_;
     juce::TextEditor logEditor_;
 
@@ -774,8 +783,8 @@ public:
         appProperties_.setStorageParameters(options);
     }
 
-    const juce::String getApplicationName() override { return "Matrix-Simulator"; }
-    const juce::String getApplicationVersion() override { return "0.1.0"; }
+    const juce::String getApplicationName() override { return JUCE_APPLICATION_NAME_STRING; }
+    const juce::String getApplicationVersion() override { return JUCE_APPLICATION_VERSION_STRING; }
     bool moreThanOneInstanceAllowed() override { return true; }
 
     void initialise(const juce::String&) override

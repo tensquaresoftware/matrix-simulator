@@ -15,7 +15,7 @@ if(APPLE)
     endif()
 endif()
 
-project(Matrix-Simulator VERSION 0.1.0)
+project(Matrix-Simulator VERSION 1.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -65,6 +65,8 @@ target_compile_definitions(Matrix-Simulator PRIVATE
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_STANDALONE_APPLICATION=1
+    JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:Matrix-Simulator,JUCE_PRODUCT_NAME>"
+    JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:Matrix-Simulator,JUCE_VERSION>"
 )
 
 target_link_libraries(Matrix-Simulator PRIVATE
