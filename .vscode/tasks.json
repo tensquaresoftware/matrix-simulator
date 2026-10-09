@@ -2,48 +2,19 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "CMake: Configure",
-            "type": "shell",
-            "command": "cmake",
-            "args": [
-                "--preset", "macos-debug-arm64"
-            ],
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "CMake: Configure if needed",
-            "type": "shell",
-            "command": "bash",
-            "args": [
-                "-c",
-                "test -d \"${command:cmake.buildDirectory}\" || cmake --preset macos-debug-arm64"
-            ],
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
             "label": "Build: App",
-            "type": "shell",
-            "dependsOn": ["CMake: Configure if needed"],
-            "command": "cmake",
-            "args": [
-                "--build", "${command:cmake.buildDirectory}",
-                "--target", "Matrix-Simulator",
-                "--config", "${command:cmake.buildType}"
-            ],
+            "type": "cmake",
+            "command": "build",
+            "preset": "${command:cmake.activeBuildPresetName}",
+            "targets": ["Matrix-Simulator"],
             "group": "build",
             "problemMatcher": []
         },
         {
             "label": "Build: All",
-            "type": "shell",
-            "dependsOn": ["CMake: Configure if needed"],
-            "command": "cmake",
-            "args": [
-                "--build", "${command:cmake.buildDirectory}",
-                "--config", "${command:cmake.buildType}"
-            ],
+            "type": "cmake",
+            "command": "build",
+            "preset": "${command:cmake.activeBuildPresetName}",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -52,25 +23,40 @@
         },
         {
             "label": "Clean",
-            "type": "shell",
-            "command": "rm",
-            "args": [
-                "-rf", "Builds"
-            ],
+            "type": "cmake",
+            "command": "clean",
+            "preset": "${command:cmake.activeBuildPresetName}",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "Clean + Rebuild All",
-            "dependsOn": [
-                "Clean",
-                "CMake: Configure",
-                "Build: All"
-            ],
-            "dependsOrder": "sequence",
-            "group": {
-                "kind": "build"
+            "label": "CMake: Configure",
+            "type": "cmake",
+            "command": "configure",
+            "preset": "${command:cmake.activeConfigurePresetName}",
+            "problemMatcher": []
+        },
+        {
+            "label": "Purge Builds",
+            "type": "shell",
+            "command": "rm",
+            "args": ["-rf", "Builds"],
+            "options": {
+                "cwd": "${workspaceFolder}"
             },
+            "windows": {
+                "command": "powershell",
+                "args": [
+                    "-Command",
+                    "Remove-Item -Recurse -Force Builds -ErrorAction SilentlyContinue"
+                ]
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Purge Builds and Configure",
+            "dependsOn": ["Purge Builds", "CMake: Configure"],
+            "dependsOrder": "sequence",
             "problemMatcher": []
         }
     ]

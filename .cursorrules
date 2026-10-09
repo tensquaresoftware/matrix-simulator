@@ -1,6 +1,7 @@
 # Project AI Assistant Notes
 
-This is a JUCE standalone macOS app built with CMake (no Projucer).
+This is a JUCE standalone GUI app built with CMake (no Projucer), with a
+Luthier-style multi-platform scaffold (presets, artefacts copy, `.luthier.json`).
 It answers Universal Device Inquiry as a Matrix-1000 or Matrix-6 (provisional) over MIDI.
 
 ## Layout
@@ -9,13 +10,19 @@ It answers Universal Device Inquiry as a Matrix-1000 or Matrix-6 (provisional) o
 - `Assets/Icons/` — app icon PNG (macOS Dock via `ICON_BIG` in CMake).
 - `Docs/` — long-term project knowledge (PascalCase, like `Source/` and `Builds/`).
 - `CMakeLists.txt` — build configuration; register new `.cpp` files in `target_sources`.
-- `CMakeUserPresets.json` — per-platform CMake presets (Debug / Release).
+- `CMakeUserPresets.json` — per-platform CMake presets (macOS / Windows / Linux).
+- `.luthier.json` — write-only generation sidecar (metadata reference; not reloaded by Luthier).
 
 ## Build
 
-JUCE is located via the `JUCE_DIR` environment variable, per-OS paths in `CMakeLists.txt`, or a standard install path. Configure and build with the preset for your platform, for example:
+JUCE is located via the `JUCE_DIR` environment variable, per-OS paths in `CMakeLists.txt`
+(macOS JUCE-9, Windows/Linux JUCE), or a standard install path. Configure and build with
+the preset for your platform, for example:
 
 `cmake --preset macos-debug-arm64 && cmake --build --preset macos-debug-arm64`
+
+Windows: `windows-debug` / `windows-release` (VS 2026) or `*-vs2022` legacy.  
+Linux: `linux-debug` / `linux-release`.
 
 See `README.md` for usage and protocol notes.
 
@@ -23,5 +30,6 @@ See `README.md` for usage and protocol notes.
 
 - Target the C++ standard set in `CMakeLists.txt` (`CMAKE_CXX_STANDARD` — currently C++20).
 - Version SSOT: `project(Matrix-Simulator VERSION …)` in CMake.
+- Product type is `juce_add_gui_app` — not a VST3/AU plugin.
 - Refer to the JUCE 9 API: https://docs.juce.com
 - Cursor agent rules: `.cursor/rules/` (authoritative for communication, process, and coding standards).

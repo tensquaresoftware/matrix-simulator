@@ -4,6 +4,7 @@
         { "column": 120, "color": "#00000000" }
     ],
     "cmake.configureOnOpen": true,
+    "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
     "cmake.environment": {
         "JUCE_DIR": "${env:JUCE_DIR}"
     },
@@ -25,7 +26,6 @@
     "cmake.buildBeforeRun": true,
     "cmake.saveBeforeBuild": true,
     "cmake.clearOutputBeforeBuild": true,
-    "cmake.configurePreset": "macos-debug-arm64",
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}"
     },

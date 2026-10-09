@@ -7,11 +7,12 @@ alwaysApply: true
 
 ## Environnement
 
-- macOS Tahoe, Xcode 26, CMake, **JUCE 9** (`JUCE_DIR` / chemins dans `CMakeLists.txt`, ex. `/Volumes/Guillaume/Dev/SDKs/JUCE-9`)
-- Builds dans `Builds/` — **pas** `build/` à la racine
+- macOS Tahoe, Xcode 26, CMake, **JUCE 9** sur macOS (`JUCE_DIR` / `…/JUCE-9` dans `CMakeLists.txt`) ; Windows/Linux → `…/JUCE`
+- Builds dans `Builds/` — **pas** `build/` à la racine ; presets Luthier-style (macOS / Windows / Linux)
 - Dossiers projet en **PascalCase** : `Source/`, `Docs/`, `Builds/`
 - IDE / agent : **Cursor Pro+**
-- Nature : app **standalone** GUI (pas un plugin VST/AU) — Device Inquiry MIDI via IAC
+- Nature : app **standalone** GUI (`juce_add_gui_app`, pas un plugin VST/AU) — Device Inquiry MIDI
+- Sidecar `.luthier.json` + copie Artefacts Dropbox (`Standalone/`) après build
 
 ## Git
 
@@ -28,10 +29,11 @@ alwaysApply: true
 
 ## Fichiers clés (lire avant d'implémenter)
 
-- `README.md` — usage, protocole Device Inquiry, hors périmètre
+- `README.md` — usage, protocole Device Inquiry, build multi-OS
 - `Source/DeviceInquiry.h` — octets protocole (SSOT member / family)
 - `Source/Main.cpp` — app, MIDI, UI
-- `CMakeLists.txt` — enregistrement des sources
+- `CMakeLists.txt` — enregistrement des sources + copie Artefacts
+- `CMakeUserPresets.json` — presets par plateforme
 - `.cursor/rules/` — standards communication, process, C++ / JUCE
 
 ## Interdits fréquents (rappel)
@@ -39,3 +41,4 @@ alwaysApply: true
 - Pas de texte français dans le code source
 - Pas de dépendance à un autre dépôt ou projet frère
 - Ne pas disperser les constantes de protocole hors de `DeviceInquiry.h`
+- Ne pas convertir en `juce_add_plugin` sans demande explicite

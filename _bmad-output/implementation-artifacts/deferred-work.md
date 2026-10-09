@@ -43,3 +43,15 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-juce-9-sdk-path.md`
   summary: Re-audit cpp-juce-standards deprecated-API bullets against JUCE 9 (e.g. Timer vs HighResolutionTimer).
   evidence: Only the version label was bumped; juce::Timer remains a first-class API in JUCE 9.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-luthier-cross-platform-scaffold.md`
+  summary: Add macOS Intel-Rosetta presets and fix arch FATAL regexes so they match real `…/Intel/Debug` binaryDirs.
+  evidence: Luthier/Program-Changer share the same gap; Design Notes intentionally omitted Rosetta presets for this story.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-luthier-cross-platform-scaffold.md`
+  summary: Split Windows Debug/Release (and VS 2026 vs 2022) into distinct `binaryDir` trees to avoid generator cache clashes.
+  evidence: Same shared `Builds/Windows` pattern as Luthier-generated projects; not introduced uniquely here.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-luthier-cross-platform-scaffold.md`
+  summary: Harden artefacts copy against Dropbox sync races and Debug/Release overwriting the same Standalone path.
+  evidence: Pre-existing Luthier copy semantics; acceptable for personal Dropbox workflow until a dedicated artefacts story.

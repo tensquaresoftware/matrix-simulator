@@ -1,20 +1,61 @@
-# Build
+# Build artifacts (platform-specific)
 Builds/
 cmake-build-*/
-compile_commands.json
+*.o
+*.obj
 
 # IDE / OS
-.DS_Store
-.idea/
 .vscode/.cmaketools.json
 .vscode/c_cpp_properties.json
+.idea/
+.DS_Store
 *.xcuserstate
+
+# Cache directories
+.cache/
+
+# Xcode
+*.xcodeproj
+*.xcworkspace
 DerivedData/
 
-# Local
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.vcxproj.user
+*.sln
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+install_manifest.txt
+Makefile
+
+# Binaries
+*.app
+*.component
+*.vst3
+*.exe
+*.dll
+*.dylib
+*.so
+*.a
+*.lib
+
+# Debug symbols
+*.pdb
+*.dSYM
+
+# Temporary / local
+*.log
+*~
+*.bak
+*.swp
 _local/
 .agents/
-*.bak
 
 # Cursor — ignore local IDE state; version agent rules
 .cursor/*

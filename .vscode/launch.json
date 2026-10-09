@@ -10,7 +10,29 @@
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "Build: App",
             "osx": {
-                "type": "lldb"
+                "type": "lldb",
+                "program": "${workspaceFolder}/${command:cmake.buildDirectory}/Matrix-Simulator_artefacts/${command:cmake.buildType}/Matrix-Simulator.app/Contents/MacOS/Matrix-Simulator"
+            },
+            "windows": {
+                "type": "cppvsdbg",
+                "program": "${workspaceFolder}/${command:cmake.buildDirectory}/Matrix-Simulator_artefacts/${command:cmake.buildType}/Matrix-Simulator.exe",
+                "MIMode": "windows"
+            },
+            "linux": {
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/${command:cmake.buildDirectory}/Matrix-Simulator_artefacts/${command:cmake.buildType}/Matrix-Simulator",
+                "args": [],
+                "cwd": "${workspaceFolder}",
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
+                "preLaunchTask": "Build: App"
             }
         }
     ]
