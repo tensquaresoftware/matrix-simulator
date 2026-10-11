@@ -36,7 +36,7 @@ Scaffold follows Luthier-style multi-platform CMake (presets, artefacts copy,
 - Linux (e.g. Ubuntu 22.04)
 - **Cursor** or **VS Code** with **CMake Tools**
 - CMake 3.22+, Ninja, GDB-capable toolchain (example: `sudo apt install ninja-build build-essential gdb`)
-- JUCE at `/home/guillaume/Dev/SDKs/JUCE` (or set `JUCE_DIR`)
+- JUCE 9 at `/home/guillaume/Dev/SDKs/JUCE-9` (or set `JUCE_DIR`)
 
 ### Environment Setup
 

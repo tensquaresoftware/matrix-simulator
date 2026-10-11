@@ -27,7 +27,7 @@
   "destinationDirLinux": "/home/guillaume/Dev/Projects/JUCE/Matrix-Simulator",
   "juceDirWindows": "C:/Users/Guillaume/Dev/SDKs/JUCE",
   "juceDirMacos": "/Volumes/Guillaume/Dev/SDKs/JUCE-9",
-  "juceDirLinux": "/home/guillaume/Dev/SDKs/JUCE",
+  "juceDirLinux": "/home/guillaume/Dev/SDKs/JUCE-9",
   "copyToSystemFolders": false,
   "copyToArtefactsDir": true,
   "artefactsDirWindows": "C:/Users/Guillaume/Dropbox/Dev/Artefacts",
